@@ -131,7 +131,7 @@ table.mt td.bad{color:var(--bad)} table.mt td.good{color:var(--good)}
 <header class="top">
   <div class="head-row">
     <div class="brand">Loli <span class="amp">&amp;</span> Tito</div>
-    <div class="sub">Gastos conjuntos · reparto 40 / 60</div>
+    <div class="sub">Gastos conjuntos · reparto proporcional a ingresos</div>
     <div class="ingresos-chip">Ingresos: Vos <b>$3.000.000</b> · Tito <b>$6.000.000</b></div>
   </div>
   <div class="tabs" id="tabs" role="tablist"></div>
@@ -142,7 +142,7 @@ table.mt td.bad{color:var(--bad)} table.mt td.good{color:var(--good)}
 <script>
 const DATA = {
   ingresos:{loli:3000000, tito:6000000},
-  split:{loli:0.40, tito:0.60},
+  split:{loli:1/3, tito:2/3},
   meses:[
     { id:"sep", nombre:"Septiembre 2026", aportes:{loli:1000000,tito:1500000}, usd:455.99,
       caja:[
@@ -270,13 +270,13 @@ function monthHTML(m){
   if(top) ins.push(`Lo más pesado fue <b>${top.k}</b>: <b>${money(top.v)}</b> (${pct(top.v,total)}% del total).`);
   if(dif<0) ins.push({cls:"bad",html:`Pusieron <b>${money(apT)}</b> y el gasto fue <b>${money(total)}</b>: faltaron <b>${money(-dif)}</b>. El aporte de $2,5M no alcanza para cubrir un mes.`});
   else if(apT) ins.push({cls:"good",html:`Pusieron <b>${money(apT)}</b> y gastaron <b>${money(total)}</b>: sobraron <b>${money(dif)}</b>.`});
-  ins.push({cls:"warn",html:`Con el 40/60 los gastos se llevan el <b>${shLoli}%</b> de tu ingreso y el <b>${shTito}%</b> del de Tito. Con proporcional a ingresos (33/67) sería <b>${pct(total,ingTot)}%</b> parejo.`});
+  ins.push({cls:"good",html:`El reparto es proporcional a lo que gana cada uno: así los dos ponen el mismo <b>${shLoli}%</b> de su sueldo. Es lo más justo — como Tito gana el doble, pone el doble.`});
 
   return `<section class="month" id="m-${m.id}" role="tabpanel">
     <div class="tiles">
       <div class="tile"><div class="k">Gasto conjunto</div><div class="v">${money(total)}</div>
         <div class="d">Caja ${money(cajaT)} · AMEX ${money(amexT)}</div></div>
-      <div class="tile"><div class="k">Sobre lo que ganan los dos</div><div class="v">${pct(total,ingTot)}%</div>
+      <div class="tile"><div class="k">Sobre sus ingresos</div><div class="v">${pct(total,ingTot)}%</div>
         <div class="d">${money(total)} de ${money(ingTot)} (vos $3M + Tito $6M)</div></div>
       <div class="tile"><div class="k">Aportes del mes</div><div class="v">${apT?money(apT):"—"}</div>
         <div class="d">${apT?`Vos ${money(ap.loli)} · Tito ${money(ap.tito)}`:"sin datos"}</div></div>
@@ -284,10 +284,10 @@ function monthHTML(m){
         <div class="d">aportes − gasto</div></div>
     </div>
 
-    <div class="sec-h">Aporte sugerido para cubrir un mes así · reparto 40 / 60</div>
+    <div class="sec-h">Aporte sugerido para cubrir un mes así · proporcional a ingresos (${pct(DATA.split.loli,1)}% / ${pct(DATA.split.tito,1)}%)</div>
     <div class="split">
-      <div class="s"><div class="who">Vos aportás (40%)</div><div class="mt num">${money(corrLoli)}</div><div class="sh">= ${shLoli}% de tu sueldo</div></div>
-      <div class="s"><div class="who">Tito aporta (60%)</div><div class="mt num">${money(corrTito)}</div><div class="sh">= ${shTito}% del suyo</div></div>
+      <div class="s"><div class="who">Vos aportás (${pct(DATA.split.loli,1)}%)</div><div class="mt num">${money(corrLoli)}</div><div class="sh">= ${shLoli}% de tu sueldo</div></div>
+      <div class="s"><div class="who">Tito aporta (${pct(DATA.split.tito,1)}%)</div><div class="mt num">${money(corrTito)}</div><div class="sh">= ${shTito}% del suyo</div></div>
     </div>
 
     <div class="cols">
