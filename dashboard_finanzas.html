@@ -53,7 +53,8 @@ section.month.active{display:block;animation:fade .25s ease}
 .tile .v{font-family:var(--font-d);font-size:1.5rem;font-weight:600;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.1}
 .tile .d{font-size:.77rem;color:var(--muted);margin-top:4px}
 .tile .v.good{color:var(--good)} .tile .v.bad{color:var(--bad)}
-.split{display:flex;gap:10px;margin-top:14px}
+.sec-h{font-size:.82rem;color:var(--muted);font-weight:600;margin:18px 2px 8px}
+.split{display:flex;gap:10px;margin-top:6px}
 .split .s{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow)}
 .split .s .who{font-size:.76rem;color:var(--muted);font-weight:600}
 .split .s .mt{font-family:var(--font-d);font-size:1.18rem;font-variant-numeric:tabular-nums;margin-top:2px}
@@ -265,7 +266,7 @@ function monthHTML(m){
     </div>`;
   }
   const ins=[];
-  ins.push(`Gasto conjunto: <b>${money(total)}</b> — el <b>${pct(total,ingTot)}%</b> del ingreso del hogar (${money(ingTot)}).`);
+  ins.push(`De los <b>${money(ingTot)}</b> que entran entre los dos (vos $3M + Tito $6M), los gastos conjuntos se llevaron <b>${money(total)}</b> — el <b>${pct(total,ingTot)}%</b>.`);
   if(top) ins.push(`Lo más pesado fue <b>${top.k}</b>: <b>${money(top.v)}</b> (${pct(top.v,total)}% del total).`);
   if(dif<0) ins.push({cls:"bad",html:`Pusieron <b>${money(apT)}</b> y el gasto fue <b>${money(total)}</b>: faltaron <b>${money(-dif)}</b>. El aporte de $2,5M no alcanza para cubrir un mes.`});
   else if(apT) ins.push({cls:"good",html:`Pusieron <b>${money(apT)}</b> y gastaron <b>${money(total)}</b>: sobraron <b>${money(dif)}</b>.`});
@@ -275,17 +276,18 @@ function monthHTML(m){
     <div class="tiles">
       <div class="tile"><div class="k">Gasto conjunto</div><div class="v">${money(total)}</div>
         <div class="d">Caja ${money(cajaT)} · AMEX ${money(amexT)}</div></div>
-      <div class="tile"><div class="k">Sobre ingreso hogar</div><div class="v">${pct(total,ingTot)}%</div>
-        <div class="d">de ${money(ingTot)} netos</div></div>
+      <div class="tile"><div class="k">Sobre lo que ganan los dos</div><div class="v">${pct(total,ingTot)}%</div>
+        <div class="d">${money(total)} de ${money(ingTot)} (vos $3M + Tito $6M)</div></div>
       <div class="tile"><div class="k">Aportes del mes</div><div class="v">${apT?money(apT):"—"}</div>
         <div class="d">${apT?`Vos ${money(ap.loli)} · Tito ${money(ap.tito)}`:"sin datos"}</div></div>
       <div class="tile"><div class="k">${dif<0?"Faltó":"Sobró"}</div><div class="v ${dif<0?"bad":"good"}">${apT?money(Math.abs(dif)):"—"}</div>
         <div class="d">aportes − gasto</div></div>
     </div>
 
+    <div class="sec-h">Aporte sugerido para cubrir un mes así · reparto 40 / 60</div>
     <div class="split">
-      <div class="s"><div class="who">Te toca a vos (40%)</div><div class="mt num">${money(corrLoli)}</div><div class="sh">${shLoli}% de tu ingreso</div></div>
-      <div class="s"><div class="who">Le toca a Tito (60%)</div><div class="mt num">${money(corrTito)}</div><div class="sh">${shTito}% de su ingreso</div></div>
+      <div class="s"><div class="who">Vos aportás (40%)</div><div class="mt num">${money(corrLoli)}</div><div class="sh">= ${shLoli}% de tu sueldo</div></div>
+      <div class="s"><div class="who">Tito aporta (60%)</div><div class="mt num">${money(corrTito)}</div><div class="sh">= ${shTito}% del suyo</div></div>
     </div>
 
     <div class="cols">
@@ -299,9 +301,6 @@ function monthHTML(m){
         <p class="lead">De dónde salió la plata.</p>
         <div class="bars">${barRows(medios.map(x=>({k:x.k,v:x.v})),total,k=>k[0]==="C"?"#15616d":"#c2556b")}</div>
         ${m.usd?`<div class="usd-note">✈️ Además, <b>U$S ${nf.format(m.usd)}</b> de gastos en el exterior (viajes), que se dividen 50/50 → <b>U$S ${nf.format(Math.round(m.usd/2))}</b> cada uno. Se pagaron con los dólares de la caja, así que no se cobra la percepción del 30% (se reintegra).</div>`:""}
-        <div class="sug"><div class="st">Sugerido para cubrir un mes así</div>
-          <div class="vals"><div>Vos<b>${money(sugLoli)}</b></div><div>Tito<b>${money(sugTito)}</b></div>
-          <div>Total<b>${money(total)}</b></div></div></div>
       </div>
     </div>
 
