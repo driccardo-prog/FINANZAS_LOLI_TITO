@@ -1,16 +1,11 @@
 <title>Finanzas Loli & Tito</title>
 <meta name="description" content="Dashboard mensual de gastos conjuntos">
 <style>
-/* Layout: sticky header con pestañas por mes; panel por mes con tiles de resumen arriba y dos columnas de desglose debajo. */
+/* Layout: header sticky con pestañas por mes; por mes: tiles de resumen, reparto 40/60, desglose por categoría y por medio, insights. */
 :root{
   --bg:#f4f2ee; --surface:#ffffff; --surface-2:#faf8f4; --fg:#20242b; --muted:#6b7280;
   --line:#e4e0d8; --accent:#15616d; --accent-soft:#d7e6e6; --gold:#b4842f;
   --good:#1f7a5a; --good-bg:#dff0e6; --bad:#b4453a; --bad-bg:#f6dedb;
-  --c-super:#3b82c4; --c-delivery:#e0894a; --c-resto:#c2556b; --c-cafe:#a9772f;
-  --c-verdu:#5aa469; --c-vet:#7a6fc0; --c-nafta:#6b8a3a; --c-transp:#4aa3a0;
-  --c-viaje:#d4a53a; --c-farma:#cf6f8a; --c-tram:#7f8893; --c-otros:#9aa0a6;
-  --c-expensas:#15616d; --c-servicios:#3f8c98; --c-limpieza:#6aa6ae;
-  --c-antonio:#c08a3e; --c-susc:#8a8f98;
   --r:14px; --shadow:0 1px 3px rgba(20,24,31,.06),0 6px 20px rgba(20,24,31,.05);
   --font-d:"Fraunces",Georgia,serif; --font-b:"Instrument Sans",system-ui,sans-serif;
 }
@@ -41,10 +36,9 @@ header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;backgroun
 .tabs{max-width:1040px;margin:0 auto;padding:10px 16px 0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{appearance:none;border:1px solid var(--line);background:var(--surface);color:var(--muted);
-  font-family:inherit;font-size:.9rem;font-weight:600;padding:8px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;border-bottom-left-radius:999px;transition:.15s}
+  font-family:inherit;font-size:.9rem;font-weight:600;padding:8px 15px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:.15s}
 .tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
-:root[data-theme="dark"] .tab[aria-selected="true"],
-:root:not([data-theme="light"]) .tab[aria-selected="true"]{color:#0b1416}
+:root[data-theme="dark"] .tab[aria-selected="true"]{color:#0b1416}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tab[aria-selected="true"]{color:#0b1416}}
 .tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 main{margin-top:20px}
@@ -53,16 +47,20 @@ section.month.active{display:block;animation:fade .25s ease}
 @keyframes fade{from{opacity:.4}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){section.month.active{animation:none}.bar span{transition:none}}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-@media(max-width:720px){.tiles{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.tiles{grid-template-columns:repeat(2,1fr)}}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;box-shadow:var(--shadow)}
-.tile .k{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
-.tile .v{font-family:var(--font-d);font-size:1.55rem;font-weight:600;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.1}
-.tile .d{font-size:.78rem;color:var(--muted);margin-top:4px}
-.tile.hero{grid-column:span 2}
-@media(max-width:720px){.tile.hero{grid-column:span 2}}
+.tile .k{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.tile .v{font-family:var(--font-d);font-size:1.5rem;font-weight:600;margin-top:5px;font-variant-numeric:tabular-nums;line-height:1.1}
+.tile .d{font-size:.77rem;color:var(--muted);margin-top:4px}
 .tile .v.good{color:var(--good)} .tile .v.bad{color:var(--bad)}
-.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:999px}
-.pill.good{background:var(--good-bg);color:var(--good)} .pill.bad{background:var(--bad-bg);color:var(--bad)}
+.split{display:flex;gap:10px;margin-top:14px}
+.split .s{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow)}
+.split .s .who{font-size:.76rem;color:var(--muted);font-weight:600}
+.split .s .mt{font-family:var(--font-d);font-size:1.18rem;font-variant-numeric:tabular-nums;margin-top:2px}
+.split .s .sh{font-size:.72rem;color:var(--muted);margin-top:2px}
+.recon{margin-top:12px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;padding:11px 14px;font-size:.86rem;display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline}
+.recon b{font-variant-numeric:tabular-nums}
+.recon .res.bad{color:var(--bad);font-weight:600} .recon .res.good{color:var(--good);font-weight:600}
 .cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
 @media(max-width:820px){.cols{grid-template-columns:1fr}}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 17px;box-shadow:var(--shadow)}
@@ -70,38 +68,40 @@ section.month.active{display:block;animation:fade .25s ease}
 .card h3 .tot{font-family:var(--font-b);font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .card .lead{font-size:.8rem;color:var(--muted);margin:2px 0 12px}
 .bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
-.row{display:grid;grid-template-columns:118px 1fr auto;align-items:center;gap:10px}
+.row{display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:10px}
 .row .lbl{font-size:.82rem;display:flex;align-items:center;gap:7px;min-width:0}
 .row .lbl .dot{width:9px;height:9px;border-radius:3px;flex:none}
 .row .lbl .txt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.bar{height:16px;background:var(--surface-2);border-radius:6px;overflow:hidden}
+.bar{height:16px;background:var(--surface-2);border-radius:6px;overflow:hidden;min-width:0}
 .bar span{display:block;height:100%;border-radius:6px;transition:width .5s cubic-bezier(.4,0,.2,1)}
 .row .amt{font-size:.82rem;font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
 .row .amt .pct{color:var(--muted);font-size:.72rem;margin-left:5px}
-.split{display:flex;gap:10px;margin-top:10px}
-.split .s{flex:1;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
-.split .s .who{font-size:.76rem;color:var(--muted);font-weight:600}
-.split .s .mt{font-family:var(--font-d);font-size:1.15rem;font-variant-numeric:tabular-nums;margin-top:2px}
-.split .s .sh{font-size:.72rem;color:var(--muted);margin-top:2px}
+.usd-note,.sug{margin-top:14px;border-radius:12px;padding:11px 13px;font-size:.82rem}
+.usd-note{background:var(--accent-soft);color:var(--fg)}
+.usd-note b{font-variant-numeric:tabular-nums}
+.sug{background:var(--surface-2);border:1px dashed var(--line)}
+.sug .st{font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.sug .vals{display:flex;gap:18px;margin-top:6px;flex-wrap:wrap}
+.sug .vals div{font-size:.84rem} .sug .vals b{font-family:var(--font-d);font-size:1.05rem;font-variant-numeric:tabular-nums;display:block}
 ul.ins{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:9px}
-ul.ins li{font-size:.86rem;padding-left:20px;position:relative;color:var(--fg)}
+ul.ins li{font-size:.86rem;padding-left:20px;position:relative}
 ul.ins li::before{content:"";position:absolute;left:4px;top:7px;width:7px;height:7px;border-radius:2px;background:var(--accent)}
-ul.ins li.warn::before{background:var(--gold)} ul.ins li.good::before{background:var(--good)}
+ul.ins li.warn::before{background:var(--gold)} ul.ins li.bad::before{background:var(--bad)} ul.ins li.good::before{background:var(--good)}
 ul.ins b{font-variant-numeric:tabular-nums}
 .note{font-size:.78rem;color:var(--muted);margin-top:14px;padding:11px 13px;background:var(--surface-2);border:1px dashed var(--line);border-radius:10px}
-.annual-bars{display:flex;flex-direction:column;gap:14px;margin-top:6px}
-.ab{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:center}
+.annual-bars{display:flex;flex-direction:column;gap:13px;margin-top:6px}
+.ab{display:grid;grid-template-columns:62px 1fr;gap:12px;align-items:center}
 .ab .m{font-weight:600;font-size:.9rem}
-.ab .track{background:var(--surface-2);border-radius:8px;height:34px;position:relative;overflow:hidden}
-.ab .fill{height:100%;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 70%,var(--gold)));display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:#fff;font-size:.82rem;font-variant-numeric:tabular-nums;font-weight:600;border-radius:8px;min-width:54px}
+.ab .track{background:var(--surface-2);border-radius:8px;height:32px;position:relative;overflow:hidden}
+.ab .fill{height:100%;background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 65%,var(--gold)));display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:#fff;font-size:.8rem;font-variant-numeric:tabular-nums;font-weight:600;border-radius:8px;min-width:58px}
 :root[data-theme="dark"] .ab .fill,:root:not([data-theme="light"]) .ab .fill{color:#0b1416}
 table.mt{width:100%;border-collapse:collapse;font-size:.84rem;margin-top:6px}
 table.mt th,table.mt td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}
 table.mt th:first-child,table.mt td:first-child{text-align:left}
 table.mt th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.05em}
+table.mt td.bad{color:var(--bad)} table.mt td.good{color:var(--good)}
 .tbl-scroll{overflow-x:auto}
 .foot{text-align:center;color:var(--muted);font-size:.76rem;margin-top:26px}
-.sec-title{font-family:var(--font-d);font-size:.95rem;color:var(--muted);margin:18px 2px 8px;font-weight:600}
 </style>
 
 <header class="top">
@@ -119,112 +119,152 @@ table.mt th{color:var(--muted);font-weight:600;font-size:.74rem;text-transform:u
 const DATA = {
   ingresos:{loli:3000000, tito:6000000},
   split:{loli:0.40, tito:0.60},
-  nombres:{loli:"Vos", tito:"Tito"},
   meses:[
-    { id:"jun", nombre:"Junio 2026",
-      fijos:[
-        {grupo:"Expensas", concepto:"Expensas Pilar", monto:398000},
-        {grupo:"Servicios", concepto:"Luz Núñez", monto:52392},
-        {grupo:"Servicios", concepto:"Wifi Núñez", monto:38940},
-        {grupo:"Suscripciones", concepto:"Netflix", monto:22648},
+    { id:"jun", nombre:"Junio 2026", aportes:{loli:1000000,tito:1500000},
+      caja:[
+        {c:"Expensas Pilar","cat":"Expensas",m:398000},
+        {c:"Luz Núñez","cat":"Servicios",m:52392},
+        {c:"Wifi Núñez","cat":"Servicios",m:38940},
+        {c:"Netflix","cat":"Suscripciones",m:22648},
+      ],
+      amex:[ {c:"Hamburguesería Colegiales","cat":"Restaurant",m:47000} ] },
+
+    { id:"jul", nombre:"Julio 2026", aportes:{loli:1000000,tito:2000000},
+      caja:[
+        {c:"Expensas Núñez","cat":"Expensas",m:415000},
+        {c:"Expensas Pilar","cat":"Expensas",m:398000},
+        {c:"Luz Núñez","cat":"Servicios",m:21318},
+        {c:"Luz Pilar","cat":"Servicios",m:24579},
+        {c:"Wifi Núñez","cat":"Servicios",m:44898},
+        {c:"Wifi Pilar","cat":"Servicios",m:45238},
+        {c:"Limpieza Núñez","cat":"Limpieza",m:198000},
+        {c:"Limpieza Pilar","cat":"Limpieza",m:63000},
+        {c:"Paseadora Antonio","cat":"Mascota",m:98000},
+        {c:"Netflix","cat":"Suscripciones",m:22648},
       ],
       amex:[
-        {detalle:"Hamburguesería Colegiales", cat:"Restaurant", monto:47000},
+        {c:"Merpago Delfin","cat":"Supermercado",m:23500},
+        {c:"Groovypets","cat":"Mascota",m:50900},
+        {c:"Merpago-h2soap","cat":"Otros",m:14944},
+        {c:"Groovypets","cat":"Mascota",m:44500},
+        {c:"Rappi","cat":"Delivery",m:50897},
+        {c:"Super Manzanares","cat":"Supermercado",m:25000},
+        {c:"Pedidos Ya market","cat":"Supermercado",m:34800},
+        {c:"Rappi Super","cat":"Delivery",m:156500},
+        {c:"La Noire Café + Razo","cat":"Cafecito",m:48900},
+        {c:"Merpago Delfin + Paroissien","cat":"Supermercado",m:92000},
+        {c:"Solileb","cat":"Cafecito",m:74000},
+        {c:"Rappi","cat":"Delivery",m:22162},
+        {c:"JETSMART (vuelos)","cat":"Viaje",m:743000},
+        {c:"Rappi","cat":"Delivery",m:17192},
+        {c:"Rappi","cat":"Delivery",m:37492},
+        {c:"Parmegiano","cat":"Restaurant",m:46458},
+        {c:"Santicheese","cat":"Restaurant",m:109800},
+        {c:"dlorappi","cat":"Delivery",m:6490},
+        {c:"Merpago-Delfin","cat":"Supermercado",m:30246},
+        {c:"Vacalin","cat":"Supermercado",m:33100},
+        {c:"Rappi","cat":"Delivery",m:32554},
+        {c:"Rappi","cat":"Delivery",m:64450},
+        {c:"Demente","cat":"Supermercado",m:14000},
+        {c:"Evelia","cat":"Restaurant",m:160400},
       ] },
-    { id:"jul", nombre:"Julio 2026",
-      fijos:[
-        {grupo:"Expensas", concepto:"Expensas Núñez", monto:415000},
-        {grupo:"Expensas", concepto:"Expensas Pilar", monto:398000},
-        {grupo:"Servicios", concepto:"Luz Núñez", monto:21318},
-        {grupo:"Servicios", concepto:"Luz Pilar", monto:24579},
-        {grupo:"Servicios", concepto:"Wifi Núñez", monto:44898},
-        {grupo:"Servicios", concepto:"Wifi Pilar", monto:45238},
-        {grupo:"Limpieza", concepto:"Limpieza Núñez", monto:198000},
-        {grupo:"Limpieza", concepto:"Limpieza Pilar", monto:63000},
-        {grupo:"Antonio", concepto:"Paseadora Antonio", monto:98000},
-        {grupo:"Suscripciones", concepto:"Netflix", monto:22648},
+
+    { id:"sep", nombre:"Septiembre 2026", aportes:{loli:1000000,tito:1500000}, usd:455.99,
+      caja:[
+        {c:"Expensas Núñez (fideicomiso)","cat":"Expensas",m:799294},
+        {c:"Expensas Pilar (consorcio)","cat":"Expensas",m:400612},
+        {c:"Limpieza · Graciela Brav","cat":"Limpieza",m:84000},
+        {c:"Limpieza · Fredesvinda Palacio","cat":"Limpieza",m:170000},
+        {c:"Paseadora Antonio (Andrea Verón)","cat":"Mascota",m:87000},
+        {c:"Pilates (Fosque ×2)","cat":"Pilates",m:138000},
+        {c:"Débito automático DEBIN","cat":"Otros",m:41999},
+        {c:"Ferretería Alzaga (portón)","cat":"Hogar",m:40000},
+        {c:"Cabrera Carlos Alberto","cat":"Otros",m:150000},
+        {c:"Nicolás García","cat":"Otros",m:6750},
+        {c:"“Ya ganaste” (débito)","cat":"Otros",m:58000},
+        {c:"ebanxsa (débito)","cat":"Otros",m:10938},
+        {c:"Sushi (Juanse)","cat":"Restaurant",m:50000},
       ],
       amex:[
-        {detalle:"Merpago Delfin", cat:"Supermercado", monto:23500},
-        {detalle:"Groovypets", cat:"Veterinaria", monto:50900},
-        {detalle:"Merpago-h2soap", cat:"Otros", monto:14944},
-        {detalle:"Groovypets", cat:"Veterinaria", monto:44500},
-        {detalle:"Rappi", cat:"Delivery", monto:50897},
-        {detalle:"Super Manzanares", cat:"Supermercado", monto:25000},
-        {detalle:"Pedidos Ya market", cat:"Supermercado", monto:34800},
-        {detalle:"Rappi Super", cat:"Delivery", monto:156500},
-        {detalle:"La Noire Café + Razo-Razo", cat:"Cafecito", monto:48900},
-        {detalle:"Merpago Delfin + Super Paroissien", cat:"Supermercado", monto:92000},
-        {detalle:"Solileb", cat:"Cafecito", monto:74000},
-        {detalle:"Rappi", cat:"Delivery", monto:22162},
-        {detalle:"JETSMART (vuelos)", cat:"Viaje", monto:743000},
-        {detalle:"Rappi", cat:"Delivery", monto:17192},
-        {detalle:"Rappi", cat:"Delivery", monto:37492},
-        {detalle:"Parmegiano", cat:"Restaurant", monto:46458},
-        {detalle:"Santicheese", cat:"Restaurant", monto:109800},
-        {detalle:"dlorappi", cat:"Delivery", monto:6490},
-        {detalle:"Merpago-Delfin", cat:"Supermercado", monto:30246},
-        {detalle:"Vacalin", cat:"Supermercado", monto:33100},
-        {detalle:"Rappi", cat:"Delivery", monto:32554},
-        {detalle:"Rappi", cat:"Delivery", monto:64450},
-        {detalle:"Demente", cat:"Supermercado", monto:14000},
-        {detalle:"Evelia", cat:"Restaurant", monto:160400},
+        {c:"Rappi","cat":"Delivery",m:61842},
+        {c:"Rappi","cat":"Delivery",m:164937},
+        {c:"dlopedidosya propina","cat":"Delivery",m:800},
+        {c:"Rappi (Tito)","cat":"Delivery",m:69552},
+        {c:"dlorappi (Tito)","cat":"Delivery",m:6490},
+        {c:"Rappi (Tito)","cat":"Delivery",m:52432},
+        {c:"Rappi (Tito)","cat":"Delivery",m:19177},
+        {c:"Rappi (Tito)","cat":"Delivery",m:2000},
+        {c:"Carrefour","cat":"Supermercado",m:127664},
+        {c:"Pedidos Ya market","cat":"Supermercado",m:21288},
+        {c:"Super Manzanares","cat":"Supermercado",m:15900},
+        {c:"Super Manzanares (Tito)","cat":"Supermercado",m:32898},
+        {c:"Merpago interseller (?)","cat":"Otros",m:120273},
+        {c:"Merpago hollsen (?)","cat":"Otros",m:73500},
+        {c:"Merpago bourbonrosado (?)","cat":"Otros",m:10500},
+        {c:"Baby cottons (Tito)","cat":"Otros",m:26500},
+        {c:"Telviso Hogar ×2","cat":"Hogar",m:57556},
+        {c:"Edenor (luz)","cat":"Servicios",m:26731},
+        {c:"Telecentro wifi (Tito)","cat":"Servicios",m:60498},
+        {c:"Payu-Uber","cat":"Transporte",m:50252},
+        {c:"Payu-Uber (Tito)","cat":"Transporte",m:29880},
+        {c:"Netflix","cat":"Suscripciones",m:22648},
+        {c:"Groovy Pets","cat":"Mascota",m:30000},
+        {c:"Groovy Pets (Tito)","cat":"Mascota",m:86400},
+        {c:"Merpago mascotas (Tito)","cat":"Mascota",m:65800},
+        {c:"Fudo soma pastas (Tito)","cat":"Restaurant",m:67500},
+        {c:"Impuestos y sellos AMEX","cat":"Impuestos",m:26934},
       ] },
   ]
 };
 
-const CAT_COLOR={Supermercado:"--c-super",Delivery:"--c-delivery",Restaurant:"--c-resto",
-  Cafecito:"--c-cafe","Verdulería":"--c-verdu",Veterinaria:"--c-vet",Nafta:"--c-nafta",
-  Transporte:"--c-transp",Viaje:"--c-viaje",Farmacia:"--c-farma","Trámites":"--c-tram",Otros:"--c-otros"};
-const GRP_COLOR={Expensas:"--c-expensas",Servicios:"--c-servicios",Limpieza:"--c-limpieza",
-  Antonio:"--c-antonio",Suscripciones:"--c-susc"};
-const GRP_LABEL={Expensas:"Expensas",Servicios:"Luz · Wifi",Limpieza:"Limpieza",
-  Antonio:"Antonio (paseadora)",Suscripciones:"Suscripciones"};
+const CAT_COLOR={Expensas:"#15616d",Servicios:"#3f8c98",Limpieza:"#6aa6ae",Pilates:"#9b6a9e",
+  Suscripciones:"#8a8f98",Supermercado:"#3b82c4","Verdulería":"#5aa469",Delivery:"#e0894a",
+  Restaurant:"#c2556b",Cafecito:"#a9772f",Transporte:"#4aa3a0",Viaje:"#d4a53a",
+  Mascota:"#7a6fc0",Hogar:"#b07d56",Impuestos:"#9aa0a6",Otros:"#b9bdc2"};
 
 const nf=new Intl.NumberFormat("es-AR",{maximumFractionDigits:0});
 const money=n=>"$"+nf.format(Math.round(n));
 const pct=(n,d)=>d?Math.round(n/d*1000)/10:0;
 const sum=a=>a.reduce((s,x)=>s+x,0);
-function agg(items,key){const m={};items.forEach(i=>{m[i[key]]=(m[i[key]]||0)+i.monto});
-  return Object.entries(m).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v);}
+const totalMes=m=>sum(m.caja.map(x=>x.m))+sum(m.amex.map(x=>x.m));
+function aggCat(items){const o={};items.forEach(i=>o[i.cat]=(o[i.cat]||0)+i.m);
+  return Object.entries(o).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v);}
 
-function barRows(entries,colorMap,total,labelMap){
+function barRows(entries,total,colorFn){
   const max=Math.max(...entries.map(e=>e.v),1);
-  return entries.map(e=>{
-    const col=`var(${colorMap[e.k]||"--c-otros"})`;
-    const lab=(labelMap&&labelMap[e.k])||e.k;
-    return `<div class="row"><div class="lbl"><span class="dot" style="background:${col}"></span><span class="txt" title="${lab}">${lab}</span></div>
+  return entries.map(e=>{const col=colorFn(e.k);
+    return `<div class="row"><div class="lbl"><span class="dot" style="background:${col}"></span><span class="txt" title="${e.k}">${e.k}</span></div>
       <div class="bar"><span style="width:${Math.max(e.v/max*100,2)}%;background:${col}"></span></div>
-      <div class="amt">${money(e.v)}<span class="pct">${pct(e.v,total)}%</span></div></div>`;
-  }).join("");
+      <div class="amt">${money(e.v)}<span class="pct">${pct(e.v,total)}%</span></div></div>`;}).join("");
 }
 
 function monthHTML(m){
-  const fijosT=sum(m.fijos.map(f=>f.monto));
-  const amexT=sum(m.amex.map(a=>a.monto));
-  const total=fijosT+amexT;
+  const cajaT=sum(m.caja.map(x=>x.m)), amexT=sum(m.amex.map(x=>x.m)), total=cajaT+amexT;
   const ingTot=DATA.ingresos.loli+DATA.ingresos.tito;
   const corrLoli=total*DATA.split.loli, corrTito=total*DATA.split.tito;
   const shLoli=pct(corrLoli,DATA.ingresos.loli), shTito=pct(corrTito,DATA.ingresos.tito);
-  const fg=agg(m.fijos,"grupo"), ac=agg(m.amex,"cat");
-  const combined=[...fg.map(e=>({k:GRP_LABEL[e.k]||e.k,v:e.v})),...ac].sort((a,b)=>b.v-a.v).slice(0,5);
-  const topCat=ac[0];
-  // insights
+  const ap=m.aportes||{loli:0,tito:0}, apT=ap.loli+ap.tito, dif=apT-total;
+  const cats=aggCat([...m.caja,...m.amex]), top=cats[0];
+  const medios=[{k:"Caja Santander (débito)",v:cajaT,c:"#15616d"},{k:"AMEX (tarjeta)",v:amexT,c:"#c2556b"}];
+  const sugLoli=total*DATA.split.loli, sugTito=total*DATA.split.tito;
+
   const ins=[];
-  ins.push(`Gasto conjunto del mes: <b>${money(total)}</b> — el <b>${pct(total,ingTot)}%</b> del ingreso del hogar (${money(ingTot)}).`);
-  if(topCat) ins.push(`Lo más alto de la AMEX fue <b>${topCat.k}</b> con <b>${money(topCat.v)}</b> (${pct(topCat.v,amexT)}% de la tarjeta).`);
-  ins.push({cls:"warn",html:`Con el 40/60 los gastos conjuntos se llevan el <b>${shLoli}%</b> de tu ingreso y el <b>${shTito}%</b> del de Tito. Con el proporcional a ingresos (33/67) sería <b>${pct(total,ingTot)}%</b> parejo para los dos.`});
-  const superAmex=ac.find(e=>e.k==="Supermercado"), deli=ac.find(e=>e.k==="Delivery");
-  if(superAmex&&deli) ins.push({cls:"good",html:`Comida fuera de casa (Delivery + Restaurant + Cafecito) vs. super: mirá si conviene volcar algo de delivery a super para recortar.`});
+  ins.push(`Gasto conjunto: <b>${money(total)}</b> — el <b>${pct(total,ingTot)}%</b> del ingreso del hogar (${money(ingTot)}).`);
+  if(top) ins.push(`Lo más pesado fue <b>${top.k}</b>: <b>${money(top.v)}</b> (${pct(top.v,total)}% del total).`);
+  if(dif<0) ins.push({cls:"bad",html:`Pusieron <b>${money(apT)}</b> y el gasto fue <b>${money(total)}</b>: faltaron <b>${money(-dif)}</b>. El aporte de $2,5M no alcanza para cubrir un mes.`});
+  else if(apT) ins.push({cls:"good",html:`Pusieron <b>${money(apT)}</b> y gastaron <b>${money(total)}</b>: sobraron <b>${money(dif)}</b>.`});
+  ins.push({cls:"warn",html:`Con el 40/60 los gastos se llevan el <b>${shLoli}%</b> de tu ingreso y el <b>${shTito}%</b> del de Tito. Con proporcional a ingresos (33/67) sería <b>${pct(total,ingTot)}%</b> parejo.`});
 
   return `<section class="month" id="m-${m.id}" role="tabpanel">
     <div class="tiles">
-      <div class="tile hero"><div class="k">Gasto conjunto</div><div class="v">${money(total)}</div>
-        <div class="d">Fijos ${money(fijosT)} · AMEX ${money(amexT)}</div></div>
+      <div class="tile"><div class="k">Gasto conjunto</div><div class="v">${money(total)}</div>
+        <div class="d">Caja ${money(cajaT)} · AMEX ${money(amexT)}</div></div>
       <div class="tile"><div class="k">Sobre ingreso hogar</div><div class="v">${pct(total,ingTot)}%</div>
         <div class="d">de ${money(ingTot)} netos</div></div>
-      <div class="tile"><div class="k">Top categoría</div><div class="v" style="font-size:1.15rem">${topCat?topCat.k:"—"}</div>
-        <div class="d">${topCat?money(topCat.v):""}</div></div>
+      <div class="tile"><div class="k">Aportes del mes</div><div class="v">${apT?money(apT):"—"}</div>
+        <div class="d">${apT?`Vos ${money(ap.loli)} · Tito ${money(ap.tito)}`:"sin datos"}</div></div>
+      <div class="tile"><div class="k">${dif<0?"Faltó":"Sobró"}</div><div class="v ${dif<0?"bad":"good"}">${apT?money(Math.abs(dif)):"—"}</div>
+        <div class="d">aportes − gasto</div></div>
     </div>
 
     <div class="split">
@@ -234,65 +274,71 @@ function monthHTML(m){
 
     <div class="cols">
       <div class="card">
-        <h3>Gastos AMEX <span class="tot num">${money(amexT)}</span></h3>
-        <p class="lead">Tarjeta conjunta, por categoría. Dólares de viaje van 50/50.</p>
-        <div class="bars">${ac.length?barRows(ac,CAT_COLOR,amexT):'<p class="lead">Sin gastos de tarjeta este mes.</p>'}</div>
+        <h3>En qué se gastó <span class="tot num">${money(total)}</span></h3>
+        <p class="lead">Todo lo conjunto del mes (caja Santander + AMEX), por categoría.</p>
+        <div class="bars">${barRows(cats,total,k=>CAT_COLOR[k]||"#b9bdc2")}</div>
       </div>
       <div class="card">
-        <h3>Gastos fijos <span class="tot num">${money(fijosT)}</span></h3>
-        <p class="lead">Débitos de la caja de ahorro Santander.</p>
-        <div class="bars">${barRows(fg,GRP_COLOR,fijosT,GRP_LABEL)}</div>
-        <h3 style="margin-top:18px">Dónde se gastó más <span class="tot num">top 5</span></h3>
-        <div class="bars" style="margin-top:8px">${barRows(combined,{},total)}</div>
+        <h3>Por medio de pago</h3>
+        <p class="lead">De dónde salió la plata.</p>
+        <div class="bars">${barRows(medios.map(x=>({k:x.k,v:x.v})),total,k=>k[0]==="C"?"#15616d":"#c2556b")}</div>
+        ${m.usd?`<div class="usd-note">✈️ Además, <b>U$S ${nf.format(m.usd)}</b> de gastos en el exterior (viajes), que se dividen 50/50 → <b>U$S ${nf.format(Math.round(m.usd/2))}</b> cada uno. Se pagaron con los dólares de la caja, así que no se cobra la percepción del 30% (se reintegra).</div>`:""}
+        <div class="sug"><div class="st">Sugerido para cubrir un mes así</div>
+          <div class="vals"><div>Vos<b>${money(sugLoli)}</b></div><div>Tito<b>${money(sugTito)}</b></div>
+          <div>Total<b>${money(total)}</b></div></div></div>
       </div>
     </div>
 
     <div class="card" style="margin-top:16px">
       <h3>Para pensar el ahorro</h3>
       <ul class="ins">${ins.map(i=>typeof i==="string"?`<li>${i}</li>`:`<li class="${i.cls}">${i.html}</li>`).join("")}</ul>
-      <div class="note">Estos son los meses que ya tenía de la planilla. Mandame el resumen de AMEX + la caja Santander del mes actual y lo agrego como una pestaña nueva, sin tocar nada de lo anterior.</div>
+      ${m.id==="sep"?`<div class="note">Hay <b>~$498.000</b> en "Otros" que todavía no sé qué son (Merpago interseller $120k, hollsen $73,5k, Cabrera $150k, "Ya ganaste" $58k, bourbonrosado, DEBIN $42k, ebanxsa). Si me decís qué son, los reclasifico y el análisis queda más fino.</div>`:`<div class="note">Mandame el resumen del próximo mes (AMEX + caja Santander) y lo agrego como pestaña nueva.</div>`}
     </div>
   </section>`;
 }
 
 function annualHTML(){
-  const rows=DATA.meses.map(m=>{
-    const t=sum(m.fijos.map(f=>f.monto))+sum(m.amex.map(a=>a.monto));return {nombre:m.nombre,t};});
+  const rows=DATA.meses.map(m=>{const t=totalMes(m);const ap=(m.aportes||{loli:0,tito:0});
+    return {nombre:m.nombre.split(" ")[0],t,ap:ap.loli+ap.tito};});
   const max=Math.max(...rows.map(r=>r.t),1);
   const ingTot=DATA.ingresos.loli+DATA.ingresos.tito;
-  const bars=rows.map(r=>`<div class="ab"><div class="m">${r.nombre.split(" ")[0]}</div>
-    <div class="track"><div class="fill" style="width:${Math.max(r.t/max*100,10)}%">${money(r.t)}</div></div></div>`).join("");
-  // category table across months
-  const cats={};DATA.meses.forEach(m=>{m.amex.forEach(a=>{cats[a.cat]=cats[a.cat]||{};cats[a.cat][m.id]=(cats[a.cat][m.id]||0)+a.monto});});
-  const catNames=Object.keys(cats).sort((a,b)=>sum(Object.values(cats[b]))-sum(Object.values(cats[a])));
-  const ths=DATA.meses.map(m=>`<th>${m.nombre.split(" ")[0]}</th>`).join("");
-  const trs=catNames.map(c=>`<tr><td>${c}</td>${DATA.meses.map(m=>`<td>${cats[c][m.id]?money(cats[c][m.id]):"—"}</td>`).join("")}</tr>`).join("");
+  const bars=rows.map(r=>`<div class="ab"><div class="m">${r.nombre}</div>
+    <div class="track"><div class="fill" style="width:${Math.max(r.t/max*100,12)}%">${money(r.t)}</div></div></div>`).join("");
+  const trs=DATA.meses.map(m=>{const t=totalMes(m);const ap=(m.aportes||{loli:0,tito:0});const apT=ap.loli+ap.tito;const dif=apT-t;
+    return `<tr><td>${m.nombre.split(" ")[0]}</td><td>${money(t)}</td><td>${apT?money(apT):"—"}</td>
+      <td class="${dif<0?"bad":"good"}">${apT?(dif<0?"−":"+")+money(Math.abs(dif)):"—"}</td>
+      <td>${pct(t,ingTot)}%</td></tr>`;}).join("");
+  // category trend
+  const allCats={};DATA.meses.forEach(m=>aggCat([...m.caja,...m.amex]).forEach(e=>{allCats[e.k]=allCats[e.k]||{};allCats[e.k][m.id]=e.v;}));
+  const catNames=Object.keys(allCats).sort((a,b)=>sum(Object.values(allCats[b]))-sum(Object.values(allCats[a])));
+  const cths=DATA.meses.map(m=>`<th>${m.nombre.split(" ")[0]}</th>`).join("");
+  const ctrs=catNames.map(c=>`<tr><td>${c}</td>${DATA.meses.map(m=>`<td>${allCats[c][m.id]?money(allCats[c][m.id]):"—"}</td>`).join("")}</tr>`).join("");
   return `<section class="month" id="m-anual" role="tabpanel">
     <div class="card"><h3>Gasto conjunto por mes</h3>
-      <p class="lead">Total de fijos + AMEX. Sobre un ingreso del hogar de ${money(ingTot)}.</p>
+      <p class="lead">Sobre un ingreso del hogar de ${money(ingTot)}.</p>
       <div class="annual-bars">${bars}</div></div>
-    <div class="card" style="margin-top:16px"><h3>Categorías AMEX mes a mes</h3>
-      <p class="lead">Para ver tendencias: qué sube, qué baja.</p>
-      <div class="tbl-scroll"><table class="mt"><thead><tr><th>Categoría</th>${ths}</tr></thead><tbody>${trs}</tbody></table></div></div>
+    <div class="card" style="margin-top:16px"><h3>Aportes vs. gasto</h3>
+      <div class="tbl-scroll"><table class="mt"><thead><tr><th>Mes</th><th>Gastaron</th><th>Pusieron</th><th>Dif.</th><th>% ingreso</th></tr></thead>
+      <tbody>${trs}</tbody></table></div></div>
+    <div class="card" style="margin-top:16px"><h3>Categorías mes a mes</h3>
+      <p class="lead">Para ver qué sube y qué baja.</p>
+      <div class="tbl-scroll"><table class="mt"><thead><tr><th>Categoría</th>${cths}</tr></thead><tbody>${ctrs}</tbody></table></div></div>
   </section>`;
 }
 
-// render
 const main=document.getElementById("main"), tabs=document.getElementById("tabs");
 main.innerHTML=DATA.meses.map(monthHTML).join("")+annualHTML();
 const tabDefs=[...DATA.meses.map(m=>({id:m.id,label:m.nombre.split(" ")[0]})),{id:"anual",label:"Resumen"}];
 tabs.innerHTML=tabDefs.map(t=>`<button class="tab" role="tab" data-id="${t.id}" aria-selected="false">${t.label}</button>`).join("");
-
 function show(id){
   document.querySelectorAll("section.month").forEach(s=>s.classList.toggle("active",s.id==="m-"+id));
   document.querySelectorAll(".tab").forEach(b=>b.setAttribute("aria-selected",b.dataset.id===id));
   try{localStorage.setItem("lt-tab",id)}catch(e){}
-  if(location.hash.slice(1)!==id){history.replaceState(null,"","#"+id);}
+  if(location.hash.slice(1)!==id) history.replaceState(null,"","#"+id);
 }
 tabs.addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)show(b.dataset.id);});
-let start=location.hash.slice(1);
-const valid=tabDefs.map(t=>t.id);
+let start=location.hash.slice(1);const valid=tabDefs.map(t=>t.id);
 if(!valid.includes(start)){try{start=localStorage.getItem("lt-tab")}catch(e){}}
-if(!valid.includes(start)) start=DATA.meses[DATA.meses.length-1].id;
+if(!valid.includes(start)) start="sep";
 show(start);
 </script>
