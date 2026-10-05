@@ -83,6 +83,12 @@ section.month.active{display:block;animation:fade .25s ease}
 .sug .st{font-weight:600;font-size:.76rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
 .sug .vals{display:flex;gap:18px;margin-top:6px;flex-wrap:wrap}
 .sug .vals div{font-size:.84rem} .sug .vals b{font-family:var(--font-d);font-size:1.05rem;font-variant-numeric:tabular-nums;display:block}
+.whybars{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.wb{display:grid;grid-template-columns:86px 1fr;gap:10px;align-items:center}
+.wb .wl{font-size:.8rem;color:var(--muted);font-weight:600}
+.wtrack{background:var(--surface-2);border-radius:7px;height:26px;overflow:hidden;min-width:0}
+.wfill{height:100%;display:flex;align-items:center;justify-content:flex-end;padding-right:9px;color:#fff;font-size:.78rem;font-weight:600;font-variant-numeric:tabular-nums;border-radius:7px;min-width:56px}
+:root[data-theme="dark"] .wfill,:root:not([data-theme="light"]) .wfill{color:#0b1416}
 ul.ins{list-style:none;padding:0;margin:8px 0 0;display:flex;flex-direction:column;gap:9px}
 ul.ins li{font-size:.86rem;padding-left:20px;position:relative}
 ul.ins li::before{content:"";position:absolute;left:4px;top:7px;width:7px;height:7px;border-radius:2px;background:var(--accent)}
@@ -120,55 +126,6 @@ const DATA = {
   ingresos:{loli:3000000, tito:6000000},
   split:{loli:0.40, tito:0.60},
   meses:[
-    { id:"jun", nombre:"Junio 2026", aportes:{loli:1000000,tito:1500000},
-      caja:[
-        {c:"Expensas Pilar","cat":"Expensas",m:398000},
-        {c:"Luz Núñez","cat":"Servicios",m:52392},
-        {c:"Wifi Núñez","cat":"Servicios",m:38940},
-        {c:"Netflix","cat":"Suscripciones",m:22648},
-      ],
-      amex:[ {c:"Hamburguesería Colegiales","cat":"Restaurant",m:47000} ] },
-
-    { id:"jul", nombre:"Julio 2026", aportes:{loli:1000000,tito:2000000},
-      caja:[
-        {c:"Expensas Núñez","cat":"Expensas",m:415000},
-        {c:"Expensas Pilar","cat":"Expensas",m:398000},
-        {c:"Luz Núñez","cat":"Servicios",m:21318},
-        {c:"Luz Pilar","cat":"Servicios",m:24579},
-        {c:"Wifi Núñez","cat":"Servicios",m:44898},
-        {c:"Wifi Pilar","cat":"Servicios",m:45238},
-        {c:"Limpieza Núñez","cat":"Limpieza",m:198000},
-        {c:"Limpieza Pilar","cat":"Limpieza",m:63000},
-        {c:"Paseadora Antonio","cat":"Mascota",m:98000},
-        {c:"Netflix","cat":"Suscripciones",m:22648},
-      ],
-      amex:[
-        {c:"Merpago Delfin","cat":"Supermercado",m:23500},
-        {c:"Groovypets","cat":"Mascota",m:50900},
-        {c:"Merpago-h2soap","cat":"Otros",m:14944},
-        {c:"Groovypets","cat":"Mascota",m:44500},
-        {c:"Rappi","cat":"Delivery",m:50897},
-        {c:"Super Manzanares","cat":"Supermercado",m:25000},
-        {c:"Pedidos Ya market","cat":"Supermercado",m:34800},
-        {c:"Rappi Super","cat":"Delivery",m:156500},
-        {c:"La Noire Café + Razo","cat":"Cafecito",m:48900},
-        {c:"Merpago Delfin + Paroissien","cat":"Supermercado",m:92000},
-        {c:"Solileb","cat":"Cafecito",m:74000},
-        {c:"Rappi","cat":"Delivery",m:22162},
-        {c:"JETSMART (vuelos)","cat":"Viaje",m:743000},
-        {c:"Rappi","cat":"Delivery",m:17192},
-        {c:"Rappi","cat":"Delivery",m:37492},
-        {c:"Parmegiano","cat":"Restaurant",m:46458},
-        {c:"Santicheese","cat":"Restaurant",m:109800},
-        {c:"dlorappi","cat":"Delivery",m:6490},
-        {c:"Merpago-Delfin","cat":"Supermercado",m:30246},
-        {c:"Vacalin","cat":"Supermercado",m:33100},
-        {c:"Rappi","cat":"Delivery",m:32554},
-        {c:"Rappi","cat":"Delivery",m:64450},
-        {c:"Demente","cat":"Supermercado",m:14000},
-        {c:"Evelia","cat":"Restaurant",m:160400},
-      ] },
-
     { id:"sep", nombre:"Septiembre 2026", aportes:{loli:1000000,tito:1500000}, usd:455.99,
       caja:[
         {c:"Expensas Núñez (fideicomiso)","cat":"Expensas",m:799294},
@@ -248,6 +205,28 @@ function monthHTML(m){
   const medios=[{k:"Caja Santander (débito)",v:cajaT,c:"#15616d"},{k:"AMEX (tarjeta)",v:amexT,c:"#c2556b"}];
   const sugLoli=total*DATA.split.loli, sugTito=total*DATA.split.tito;
 
+  const FIJOS=["Expensas","Servicios","Limpieza","Pilates","Suscripciones"];
+  const fijosCat=sum([...m.caja,...m.amex].filter(x=>FIJOS.includes(x.cat)).map(x=>x.m));
+  const varCat=total-fijosCat, rem=apT-fijosCat;
+  const varTop=cats.filter(c=>!FIJOS.includes(c.k)).slice(0,3);
+  let porque="";
+  if(apT && dif<0){
+    porque=`<div class="card" style="margin-top:16px">
+      <h3>¿Por qué faltó? <span class="tot num">faltaron ${money(-dif)}</span></h3>
+      <p class="lead">El aporte de ${money(apT)} no alcanza ni para los fijos más un mes normal.</p>
+      <div class="whybars">
+        <div class="wb"><span class="wl">Aportaron</span><div class="wtrack"><div class="wfill" style="width:100%;background:var(--accent)">${money(apT)}</div></div></div>
+        <div class="wb"><span class="wl">Fijos</span><div class="wtrack"><div class="wfill" style="width:${Math.min(fijosCat/total*100,100)}%;background:#6aa6ae">${money(fijosCat)}</div></div></div>
+        <div class="wb"><span class="wl">Variable</span><div class="wtrack"><div class="wfill" style="width:${Math.min(varCat/total*100,100)}%;background:var(--bad)">${money(varCat)}</div></div></div>
+      </div>
+      <ul class="ins" style="margin-top:12px">
+        <li>Los <b>gastos fijos</b> (expensas, luz/wifi, limpieza, Pilates, Netflix) ya se comieron <b>${money(fijosCat)}</b>: el <b>${pct(fijosCat,apT)}%</b> del aporte.</li>
+        <li>Quedaban solo <b>${money(Math.max(rem,0))}</b> para el resto, pero el <b>gasto variable</b> fue <b>${money(varCat)}</b>.</li>
+        <li class="bad">Por eso salieron <b>${money(-dif)}</b> de más de la caja.</li>
+        ${varTop.length?`<li>Lo variable más pesado: ${varTop.map(v=>`<b>${v.k}</b> ${money(v.v)}`).join(" · ")}.</li>`:""}
+      </ul>
+    </div>`;
+  }
   const ins=[];
   ins.push(`Gasto conjunto: <b>${money(total)}</b> — el <b>${pct(total,ingTot)}%</b> del ingreso del hogar (${money(ingTot)}).`);
   if(top) ins.push(`Lo más pesado fue <b>${top.k}</b>: <b>${money(top.v)}</b> (${pct(top.v,total)}% del total).`);
@@ -289,6 +268,7 @@ function monthHTML(m){
       </div>
     </div>
 
+    ${porque}
     <div class="card" style="margin-top:16px">
       <h3>Para pensar el ahorro</h3>
       <ul class="ins">${ins.map(i=>typeof i==="string"?`<li>${i}</li>`:`<li class="${i.cls}">${i.html}</li>`).join("")}</ul>
