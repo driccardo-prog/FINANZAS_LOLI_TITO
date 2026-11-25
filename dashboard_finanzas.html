@@ -235,6 +235,58 @@ const DATA = {
         {c:"Merpago carminalimen (?) (Tito)","cat":"Otros",m:32600},
         {c:"Impuestos y sellos AMEX","cat":"Impuestos",m:10990},
       ] },
+
+    { id:"nov", nombre:"Noviembre 2026", enCurso:"al 25/11",
+      nota:`Noviembre <b>al 25/11</b> (mes en curso) y sin los impuestos de la AMEX todavía. Sin identificar: Florencia Sivori $190.000, María Agustina Kunsch $100.000, Luján Ricardo $20.000, Gianfranco Girardi $6.500 y Merpago MercadoLibre $16.826. Decime qué son y los reclasifico.`,
+      caja:[
+        {c:"Expensas Núñez (fideicomiso)","cat":"Expensas",m:722369},
+        {c:"Expensas Pilar (consorcio)","cat":"Expensas",m:458670},
+        {c:"Limpieza · Fredesvinda Palacio","cat":"Limpieza",m:232000},
+        {c:"Limpieza · Graciela Brav","cat":"Limpieza",m:85500},
+        {c:"Limpieza · Martha Condemayta","cat":"Limpieza",m:74930},
+        {c:"Paseadora Antonio (Andrea Verón)","cat":"Mascota",m:97500},
+        {c:"Pilates (Fosque ×2)","cat":"Pilates",m:138000},
+        {c:"Débito automático DEBIN","cat":"Otros",m:23002},
+        {c:"ebanxsa ×2 (débito)","cat":"Otros",m:16733},
+        {c:"Florencia Sivori (?)","cat":"Otros",m:190000},
+        {c:"María Agustina Kunsch (?)","cat":"Otros",m:100000},
+        {c:"Gianfranco Girardi (?)","cat":"Otros",m:6500},
+        {c:"Luján Ricardo (?)","cat":"Otros",m:20000},
+      ],
+      amex:[
+        {c:"Rappi","cat":"Delivery",m:121775},
+        {c:"Rappi","cat":"Delivery",m:33870},
+        {c:"Rappi","cat":"Delivery",m:73687},
+        {c:"Rappi (Tito)","cat":"Delivery",m:19532},
+        {c:"Rappi (Tito)","cat":"Delivery",m:9252},
+        {c:"Rappi (Tito)","cat":"Delivery",m:29342},
+        {c:"Rappi (Tito)","cat":"Delivery",m:72442},
+        {c:"dlorappi (Tito)","cat":"Delivery",m:6990},
+        {c:"Cencosud / Jumbo (Tito)","cat":"Supermercado",m:76255},
+        {c:"Cencosud / Jumbo (Tito)","cat":"Supermercado",m:55851},
+        {c:"Super Manzanares","cat":"Supermercado",m:27275},
+        {c:"Super Manzanares (Tito)","cat":"Supermercado",m:26196},
+        {c:"Mercado Mac (Tito)","cat":"Supermercado",m:6000},
+        {c:"Merpago k9dogtrainers (adiestramiento)","cat":"Mascota",m:57284},
+        {c:"Groovy Pets","cat":"Mascota",m:37900},
+        {c:"Veterinaria Terranova","cat":"Mascota",m:26000},
+        {c:"Groovy Pets (Tito)","cat":"Mascota",m:20000},
+        {c:"Vet Home","cat":"Mascota",m:18700},
+        {c:"Veterinaria Terranova","cat":"Mascota",m:7800},
+        {c:"Grasa (resto)","cat":"Restaurant",m:51000},
+        {c:"Merpago nickycheese (Tito)","cat":"Restaurant",m:63500},
+        {c:"Locale (resto, Tito)","cat":"Restaurant",m:30000},
+        {c:"Trois Café","cat":"Cafecito",m:11200},
+        {c:"Trois Café","cat":"Cafecito",m:6200},
+        {c:"Merpago sundaycoffee","cat":"Cafecito",m:22000},
+        {c:"Telecentro wifi (Tito)","cat":"Servicios",m:63495},
+        {c:"Edenor luz (Tito)","cat":"Servicios",m:23187},
+        {c:"Coop tel del Viso (Tito)","cat":"Servicios",m:5351},
+        {c:"Axion arroyo seco (nafta, Tito)","cat":"Nafta",m:40200},
+        {c:"Netflix","cat":"Suscripciones",m:22648},
+        {c:"Hotel Pueblo (viaje)","cat":"Viaje",m:35000},
+        {c:"Merpago MercadoLibre (?)","cat":"Otros",m:16826},
+      ] },
   ]
 };
 
@@ -407,6 +459,6 @@ function show(id){
 tabs.addEventListener("click",e=>{const b=e.target.closest(".tab");if(b)show(b.dataset.id);});
 let start=location.hash.slice(1);const valid=tabDefs.map(t=>t.id);
 if(!valid.includes(start)){try{start=localStorage.getItem("lt-tab")}catch(e){}}
-if(!valid.includes(start)) start="oct";
+if(!valid.includes(start)) start="nov";
 show(start);
 </script>
