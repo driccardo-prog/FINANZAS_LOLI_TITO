@@ -54,6 +54,14 @@ section.month.active{display:block;animation:fade .25s ease}
 .tile .d{font-size:.77rem;color:var(--muted);margin-top:4px}
 .tile .v.good{color:var(--good)} .tile .v.bad{color:var(--bad)}
 .sec-h{font-size:.82rem;color:var(--muted);font-weight:600;margin:18px 2px 8px}
+.proj{background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--r);padding:15px 17px;margin-top:16px}
+.proj-h{font-family:var(--font-d);font-weight:600;font-size:1.08rem;color:var(--accent)}
+.proj-lead{font-size:.85rem;margin:4px 0 11px}
+.proj-lead b{font-variant-numeric:tabular-nums}
+.proj .split{margin-top:0}
+.proj .s{background:var(--surface)}
+.proj-note{font-size:.8rem;color:var(--muted);margin-top:11px;line-height:1.4}
+.proj-note b{font-variant-numeric:tabular-nums;color:var(--fg)}
 .split{display:flex;gap:10px;margin-top:6px}
 .split .s{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:11px 13px;box-shadow:var(--shadow)}
 .split .s .who{font-size:.76rem;color:var(--muted);font-weight:600}
@@ -203,8 +211,8 @@ const DATA = {
         {c:"Paseadora Antonio (Andrea Verón)","cat":"Mascota",m:195000},
         {c:"Cabify (débito 6292)","cat":"Transporte",m:15632},
         {c:"Débito automático DEBIN","cat":"Otros",m:17406},
-        {c:"Ballester Justo (Salta · deuda de Tito)","cat":"Otros",m:52800},
-        {c:"Felipe Ancarola (Salta · deuda de Tito)","cat":"Otros",m:46800},
+        {c:"Ballester Justo (Salta · deuda de Tito)","cat":"Otros",m:52800,u:true},
+        {c:"Felipe Ancarola (Salta · deuda de Tito)","cat":"Otros",m:46800,u:true},
       ],
       amex:[
         {c:"Rappi","cat":"Delivery",m:60510},
@@ -248,9 +256,9 @@ const DATA = {
         {c:"Pilates (Fosque ×2)","cat":"Pilates",m:138000},
         {c:"Débito automático DEBIN","cat":"Otros",m:23002},
         {c:"ebanxsa ×2 (débito)","cat":"Otros",m:16733},
-        {c:"Castración Antonio · Sivori (vet)","cat":"Mascota",m:190000},
-        {c:"Castración Antonio · Kunsch (vet)","cat":"Mascota",m:100000},
-        {c:"Castración Antonio · efectivo","cat":"Mascota",m:100000},
+        {c:"Castración Antonio · Sivori (vet)","cat":"Mascota",m:190000,u:true},
+        {c:"Castración Antonio · Kunsch (vet)","cat":"Mascota",m:100000,u:true},
+        {c:"Castración Antonio · efectivo","cat":"Mascota",m:100000,u:true},
         {c:"Limpieza · Luján Ricardo","cat":"Limpieza",m:20000},
         {c:"Gianfranco Girardi (?)","cat":"Otros",m:6500},
       ],
@@ -285,7 +293,7 @@ const DATA = {
         {c:"Coop tel del Viso (Tito)","cat":"Servicios",m:5351},
         {c:"Axion arroyo seco (nafta, Tito)","cat":"Nafta",m:40200},
         {c:"Netflix","cat":"Suscripciones",m:22648},
-        {c:"Hotel Pueblo (viaje)","cat":"Viaje",m:35000},
+        {c:"Hotel Pueblo (viaje)","cat":"Viaje",m:35000,u:true},
         {c:"Merpago MercadoLibre (?)","cat":"Otros",m:16826},
         {c:"Impuestos y sellos AMEX","cat":"Impuestos",m:13000},
       ] },
@@ -302,6 +310,9 @@ const money=n=>"$"+nf.format(Math.round(n));
 const pct=(n,d)=>d?Math.round(n/d*1000)/10:0;
 const sum=a=>a.reduce((s,x)=>s+x,0);
 const totalMes=m=>sum(m.caja.map(x=>x.m))+sum(m.amex.map(x=>x.m));
+const unicoMes=m=>sum([...m.caja,...m.amex].filter(x=>x.u).map(x=>x.m));
+const recurrenteMes=m=>totalMes(m)-unicoMes(m);
+const baseRecurrente=()=>sum(DATA.meses.map(recurrenteMes))/DATA.meses.length;
 function aggCat(items){const o={};items.forEach(i=>o[i.cat]=(o[i.cat]||0)+i.m);
   return Object.entries(o).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v);}
 
@@ -342,6 +353,8 @@ function monthHTML(m){
   const cats=aggCat([...m.caja,...m.amex]), top=cats[0];
   const medios=[{k:"Caja Santander (débito)",v:cajaT,c:"#15616d"},{k:"AMEX (tarjeta)",v:amexT,c:"#c2556b"}];
   const sugLoli=total*DATA.split.loli, sugTito=total*DATA.split.tito;
+  const unicos=[...m.caja,...m.amex].filter(x=>x.u), unico=sum(unicos.map(x=>x.m)), recurrente=total-unico;
+  const baseProm=baseRecurrente();
 
   const FIJOS=["Expensas","Servicios","Limpieza","Pilates","Suscripciones"];
   const fijosCat=sum([...m.caja,...m.amex].filter(x=>FIJOS.includes(x.cat)).map(x=>x.m));
@@ -368,6 +381,7 @@ function monthHTML(m){
   const ins=[];
   ins.push(`De los <b>${money(ingTot)}</b> que entran entre los dos (vos $3M + Tito $6M), los gastos conjuntos se llevaron <b>${money(total)}</b> — el <b>${pct(total,ingTot)}%</b>.`);
   if(top) ins.push(`Lo más pesado fue <b>${top.k}</b>: <b>${money(top.v)}</b> (${pct(top.v,total)}% del total).`);
+  if(unico>0) ins.push({cls:"good",html:`De los ${money(total)}, <b>${money(unico)}</b> fueron gastos <b>únicos</b> (no se repiten). La base que se repite todos los meses fue <b>${money(recurrente)}</b>.`});
   if(apT && dif<0) ins.push({cls:"bad",html:`Pusieron <b>${money(apT)}</b> y el gasto fue <b>${money(total)}</b>: faltaron <b>${money(-dif)}</b>. El aporte de $2,5M no alcanza para cubrir un mes.`});
   else if(m.enCurso) ins.push({cls:"warn",html:`Octubre va en <b>${money(total)}</b> (${m.enCurso}) y viene más bajo que septiembre: sin viajes ni gastos grandes de una sola vez. Para cubrirlo, el aporte proporcional sería <b>${money(corrLoli)}</b> vos y <b>${money(corrTito)}</b> Tito.`});
   else if(apT) ins.push({cls:"good",html:`Pusieron <b>${money(apT)}</b> y gastaron <b>${money(total)}</b>: sobraron <b>${money(dif)}</b>.`});
@@ -390,10 +404,20 @@ function monthHTML(m){
         <div class="d">para cubrir el mes</div></div>`}
     </div>
 
-    <div class="sec-h">Aporte sugerido para cubrir un mes así · proporcional a ingresos (${pct(DATA.split.loli,1)}% / ${pct(DATA.split.tito,1)}%)</div>
+    <div class="sec-h">Para cubrir ESTE mes (incluye gastos únicos) · proporcional (${pct(DATA.split.loli,1)}% / ${pct(DATA.split.tito,1)}%)</div>
     <div class="split">
       <div class="s"><div class="who">Vos aportás (${pct(DATA.split.loli,1)}%)</div><div class="mt num">${money(corrLoli)}</div><div class="sh">= ${shLoli}% de tu sueldo</div></div>
       <div class="s"><div class="who">Tito aporta (${pct(DATA.split.tito,1)}%)</div><div class="mt num">${money(corrTito)}</div><div class="sh">= ${shTito}% del suyo</div></div>
+    </div>
+
+    <div class="proj">
+      <div class="proj-h">💡 Para el mes que viene</div>
+      <div class="proj-lead">Esto se calcula sobre lo que se repite <b>todos los meses</b> — saco los gastos únicos (castración, deudas, viajes de una vez). Base recurrente promedio de ${DATA.meses.length} ${DATA.meses.length===1?"mes":"meses"}: <b>${money(baseProm)}</b>/mes.</div>
+      <div class="split">
+        <div class="s"><div class="who">Vos (${pct(DATA.split.loli,1)}%)</div><div class="mt num">${money(baseProm*DATA.split.loli)}</div></div>
+        <div class="s"><div class="who">Tito (${pct(DATA.split.tito,1)}%)</div><div class="mt num">${money(baseProm*DATA.split.tito)}</div></div>
+      </div>
+      ${unico>0?`<div class="proj-note">Este mes hubo <b>${money(unico)}</b> en gastos únicos que no se repiten (${unicos.map(x=>x.c.replace(/ *[·(].*$/,"").trim()).filter((v,i,a)=>a.indexOf(v)===i).join(", ")}): por eso <b>no</b> los cuento para el mes que viene.</div>`:`<div class="proj-note">Este mes no tuvo gastos únicos: fue un mes típico.</div>`}
     </div>
 
     <div class="cols">
@@ -439,6 +463,16 @@ function annualHTML(){
     <div class="card"><h3>Gasto conjunto por mes</h3>
       <p class="lead">Sobre un ingreso del hogar de ${money(ingTot)}.</p>
       <div class="annual-bars">${bars}</div></div>
+    <div class="card" style="margin-top:16px"><h3>Base recurrente vs. gastos únicos</h3>
+      <p class="lead">Lo que se repite todos los meses vs. los gastos de una sola vez. La proyección usa la base recurrente, no el total.</p>
+      <div class="tbl-scroll"><table class="mt"><thead><tr><th>Mes</th><th>Gastó</th><th>Únicos</th><th>Base recurrente</th></tr></thead>
+      <tbody>${DATA.meses.map(m=>{const t=totalMes(m),u=unicoMes(m);return `<tr><td>${m.nombre.split(" ")[0]}</td><td>${money(t)}</td><td>${u?"−"+money(u):"—"}</td><td><b>${money(t-u)}</b></td></tr>`;}).join("")}
+      <tr><td><b>Promedio recurrente</b></td><td>—</td><td>—</td><td><b>${money(baseRecurrente())}</b></td></tr></tbody></table></div>
+      <div class="proj" style="margin-top:14px"><div class="proj-h">💡 Proyección para el mes que viene</div>
+        <div class="proj-lead">Sobre la base recurrente promedio (<b>${money(baseRecurrente())}</b>/mes), sin gastos únicos:</div>
+        <div class="split"><div class="s"><div class="who">Vos (${pct(DATA.split.loli,1)}%)</div><div class="mt num">${money(baseRecurrente()*DATA.split.loli)}</div></div>
+        <div class="s"><div class="who">Tito (${pct(DATA.split.tito,1)}%)</div><div class="mt num">${money(baseRecurrente()*DATA.split.tito)}</div></div></div></div>
+    </div>
     <div class="card" style="margin-top:16px"><h3>Aportes vs. gasto</h3>
       <div class="tbl-scroll"><table class="mt"><thead><tr><th>Mes</th><th>Gastaron</th><th>Pusieron</th><th>Dif.</th><th>% ingreso</th></tr></thead>
       <tbody>${trs}</tbody></table></div></div>
